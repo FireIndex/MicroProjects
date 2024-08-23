@@ -1,0 +1,27 @@
+# write a ffmpeg command to add watermark in videos for 5 second repeatedly after  at varible position which always change randomly. position should be random in x and y axis. 
+
+ffmpeg -i videoplayback.mp4 -i watermark.png -filter_complex "overlay=x='if(lt(mod(t,10),5),W-w-10,10)':y='if(lt(mod(t,10),5),H-h-10,10)'" output.mp4
+
+# above command will add watermark in video at top-left and bottom-right alternatively after every 5 seconds. but we need to add watermark at random position in video.
+
+# IMAGE WATERMARK
+ffmpeg -i videoplayback.mp4 -i watermark.png -filter_complex "[0:v][1:v]overlay=x='if(eq(mod(t,10),0),(W-w)*random(1),x)':y='if(eq(mod(t,10),0),(H-h)*random(1),y)'" output.mp4
+
+# TEXT WATERMARK
+ffmpeg -i videoplayback.mp4 -vf "drawtext=fontfile='C\:\\Windows\\Fonts\\arial.ttf':text='+91 9540297546':fontsize=12:fontcolor=gray@0.8:x='if(eq(mod(t,5),0),(W-text_w)*random(1),x)':y='if(eq(mod(t,5),0),(H-text_h)*random(1),y)'" output.mp4
+
+
+# SPEEDY
+# -r 10 is the frame rate of the output video (3x)
+ffmpeg -i "video.mp4" -r 10 -vf "drawtext=fontfile='C\:\\Windows\\Fonts\\arial.ttf':text='+91 9540297546':fontsize=12:fontcolor=gray@0.8:x='if(eq(mod(t,5),0),(W-text_w)*random(1),x)':y='if(eq(mod(t,5),0),(H-text_h)*random(1),y)'" output.mp4
+# lower resolution (7x)
+ffmpeg -i "video.mp4" -r 10 -vf "drawtext=fontfile='C\:\\Windows\\Fonts\\arial.ttf':text='+91 9540297546':fontsize=12:fontcolor=gray@0.8:x='if(eq(mod(t,5),0),(W-text_w)*random(1),x)':y='if(eq(mod(t,5),0),(H-text_h)*random(1),y)',scale=320:240" output.mp4
+# multiple threads (8x)
+ffmpeg -i "video.mp4" -r 10 -vf "drawtext=fontfile='C\:\\Windows\\Fonts\\arial.ttf':text='+91 9540297546':fontsize=12:fontcolor=gray@0.8:x='if(eq(mod(t,5),0),(W-text_w)*random(1),x)':y='if(eq(mod(t,5),0),(H-text_h)*random(1),y)',scale=320:240" -threads 4 output.mp4
+# faster encoding codec 
+ffmpeg -i "video.mp4" -r 10 -vf "drawtext=fontfile='C\:\\Windows\\Fonts\\arial.ttf':text='+91 9540297546':fontsize=12:fontcolor=gray@0.8:x='if(eq(mod(t,5),0),(W-text_w)*random(1),x)':y='if(eq(mod(t,5),0),(H-text_h)*random(1),y),scale=320:240'" -threads 4 -c:v libx264 -preset ultrafast output.mp4
+
+
+
+# STRETEGY
+ffmpeg -i "video.mp4" -r 10 -vf "drawtext=fontfile='C\:\\Windows\\Fonts\\arial.ttf':text='+91 9540297546':fontsize=12:fontcolor=gray@0.8:x='if(eq(mod(t,5),0),(W-text_w)*random(1),x)':y='if(eq(mod(t,5),0),(H-text_h)*random(1),y)'" -threads 4 -c:v libx264 -preset ultrafast output.mp4
